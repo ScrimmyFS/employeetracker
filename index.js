@@ -76,7 +76,7 @@ function viewemployees() {
 
 function addemployee() {
 
-  db.findAllroles()
+  db.findallroles()
     .then(([rows]) => {
       let role = rows;
       const rolechoices = role.map(({ id, name }) => ({
