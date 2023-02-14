@@ -13,7 +13,7 @@ class DB {
 
     createemployee(employee) {
         return this.connection.promise().query(
-            "INSERT into employee set ?", employee
+            "INSERT into employee (first_name, last_name, role_id, manager_id) values ( ?, ?, ?, ?) ", [employee.NewemployeeF, employee.NewemployeeL, employee.erole, employee.emanager]
         )
     }
 
@@ -43,9 +43,12 @@ class DB {
 
     createdepartment(department) {
         return this.connection.promise().query(
-            "INSERT into department set ?", department
+            'INSERT INTO department (name) values (?)', department.department
         )
     }
+
+
+      
 
 
 }

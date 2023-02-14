@@ -56,7 +56,6 @@ function intro() {
 
 function viewemployees() {
 
-  console.log("Is, this thing on?")
 
   db.findallemployees()
     .then(([rows]) => {
@@ -70,24 +69,20 @@ function viewemployees() {
 }
 
 
-
-
-
-
 function addemployee() {
 
   db.findallroles()
     .then(([rows]) => {
       let role = rows;
-      const rolechoices = role.map(({ id, name }) => ({
-        name: name,
+      const rolechoices = role.map(({ id, title }) => ({
+        name: title,
         value: id
       }))
       db.findallemployees()
         .then(([rows]) => {
           let employee = rows;
-          const managerchoices = employee.map(({ id, name }) => ({
-            name: name,
+          const managerchoices = employee.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
             value: id
           }))
           inquirer.prompt([
@@ -103,13 +98,13 @@ function addemployee() {
               type: "list",
               message: "What is the employee's role?",
               name: "erole",
-              choices: [rolechoices],
+              choices: rolechoices,
 
             }, {
               type: "list",
               message: "Who is the employee's manager?",
               name: "emanager",
-              choices: [managerchoices],
+              choices: managerchoices,
             }
           ])
             .then(employee => {
@@ -128,7 +123,7 @@ function updaterole() {
 
 
 
-    db.findAllroles()
+  db.findallroles()
     .then(([rows]) => {
       let role = rows;
       const rolechoices = role.map(({ id, name }) => ({
@@ -136,115 +131,117 @@ function updaterole() {
         value: id
       }))
       db.findallemployees()
-      .then(([rows]) => {
-        let role = rows;
-        const employeechoices = role.map(({ id, name }) => ({
-          name: name,
-          value: id
-        }))
-        inquirer.prompt([
+        .then(([rows]) => {
+          let employee = rows;
+          const employeechoices = employee.map(({ id, name }) => ({
+            name: name,
+            value: id
+          }))
+          inquirer.prompt([
             {
-            type: "list",
-            message: "which employee's role would you like to update?",
-            name: "rolechange",
-            choices: [employeechoices]
-            },{
-                type: "list",
-            message: "what is the employee's new role?",
-            name: "newrole",
-            choices: [rolechoices]
+              type: "list",
+              message: "which employee's role would you like to update?",
+              name: "rolechange",
+              choices: [employeechoices]
+            }, {
+              type: "list",
+              message: "what is the employee's new role?",
+              name: "newrole",
+              choices: [rolechoices]
             }
-        ])
-        .then(employeeId, roleId => {
-            db.updaterole(employeeId, roleId)
-              .then(() => intro())
-          })
-      })
-})
+          ])
+            .then(employeeId, roleId => {
+              db.updaterole(employeeId, roleId)
+                .then(() => intro())
+            })
+        })
+    })
 }
 
 function addRole() {
 
-    db.findAllDepartments()
-      .then(([rows]) => {
-        let departments = rows;
-        const departmentChoices = departments.map(({ id, name }) => ({
-          name: name,
-          value: id
-        }));
+  db.findallDepartments()
+    .then(([rows]) => {
+      let departments = rows;
+      const departmentChoices = departments.map(({ id, name }) => ({
+        name: name,
+        value: id,
+      }));
 
-        inquirer.prompt([
-          {
-            name: "title",
-            message: "What is the name of the role?"
-          },
-          {
-            name: "salary",
-            message: "What is the salary of the role?"
-          },
-          {
-            type: "list",
-            name: "department_id",
-            message: "Which department does the role belong to?",
-            choices: departmentChoices
-          }
-        ])
-          .then(role => {
-            db.createRole(role)
-              .then(() => console.log(`Added ${role.title} to the database`))
-              .then(() => intro())
-          })
-      })
-  }
+      inquirer.prompt([
+        {
+          name: "title",
+          message: "What is the name of the role?"
+        },
+        {
+          name: "salary",
+          message: "What is the salary of the role?"
+        },
+        {
+          type: "list",
+          name: "department_id",
+          message: "Which department does the role belong to?",
+          choices: departmentChoices
+        }
+      ])
+        .then(role => {
+          db.createRole(role)
+            .then(() => console.log(`Added ${role.title} to the database`))
+            .then(() => intro())
+        })
+    })
+}
 
 
 
 
 function viewallroles() {
 
-    db.findallroles()
+  db.findallroles()
     .then(([rows]) => {
-        let roles = rows
-        console.table(roles)
+      let roles = rows
+      console.table(roles)
     })
-    .then(() => intro() )
+    .then(() => intro())
 
 
 }
 function viewdepartments() {
 
-    db.findalldepartments()
+  db.findallDepartments()
     .then(([rows]) => {
-        let departments = rows
-        console.table(departments)
+      let departments = rows
+      console.table(departments)
     })
-    .then(() => intro() )
+    .then(() => intro())
 
 }
+
+
 function adddepartments() {
 
+  
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "What is the name of the department?",
+      name: "department",
+    },
+  ])
+    .then(department => {
+      db.createdepartment(department)
+        .then(() => console.log(`Added ${department.department} to the database`))
+        .then(() => intro());
+    });
 
+  
     
-    inquirer.prompt=( [
-        {
-            type: "Input",
-            list: "What is the name of the department?",
-            name: "department",
-            
-        },
-      ])
-        .then(department => {
-            db.createdepartment(department)
-              .then(() => console.log(`Added ${department.title} to the database`))
-              .then(() => intro())
-          })
-
-            
+  };
+  
 
 
 
 
-}
 function quit() {
   process.exit(0)
 }

@@ -11,7 +11,7 @@ const connection = mysql.createConnection(
 
     },
     
-    console.log("what")
+    
 );
 
 connection.connect(function(err){
